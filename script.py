@@ -4,7 +4,6 @@ from PIL.ExifTags import TAGS, GPSTAGS
 import os, shutil
 import sys
 from datetime import date
-import constant
 from geopy import distance, Point
 from geopy.geocoders import GoogleV3
 import inquirer
@@ -13,7 +12,9 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-google_api_key = os.getenv("GOOGLE_API_KEY")
+GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
+SOURCE_PATH = os.getenv("SOURCE_PATH")
+DESTINATION_PATH = os.getenv("DESTINATION_PATH")
 
 def clear_folder(path):
     for filename in os.listdir(path):
@@ -57,7 +58,7 @@ def get_coordinates(exif_data):
     return (lat_decimal, long_decimal)
 
 def get_pos_by_name(location_name):
-    geolocator = GoogleV3(api_key="")
+    geolocator = GoogleV3(api_key=GOOGLE_API_KEY)
     loc = geolocator.geocode(location_name)
     if not loc:
         return None
@@ -101,7 +102,7 @@ match answers["operation"].lower():
 
         selection = answers["selection"].lower()
         if selection == current_year:
-            path = constant.DESTINATION_PATH+"/"+current_year+"/"
+            path = DESTINATION_PATH+"/"+current_year+"/"
             directories = [folder for folder in os.listdir(path) if os.path.isdir(path+folder)]
 
             questions = [
@@ -120,7 +121,7 @@ match answers["operation"].lower():
 
         if selection == "anderes":
             # select parent folder
-            path = constant.DESTINATION_PATH+"/"
+            path = DESTINATION_PATH+"/"
             directories = [folder for folder in os.listdir(path) if os.path.isdir(path+folder)]
 
             questions = [
@@ -132,7 +133,7 @@ match answers["operation"].lower():
             parent_directory = answers["directory"]
 
             # select child folder
-            path = constant.DESTINATION_PATH+"/"+parent_directory+"/"
+            path = DESTINATION_PATH+"/"+parent_directory+"/"
             directories = [folder for folder in os.listdir(path) if os.path.isdir(path+folder)]
 
             if not directories:
@@ -178,7 +179,7 @@ match answers["operation"].lower():
 
 radius = 150 # in meter
 
-child_source_path = constant.SOURCE_PATH+"/"+current_year
+child_source_path = SOURCE_PATH+"/"+current_year
 images = [file for file in os.listdir(child_source_path) if file.endswith(('jpeg', 'png', 'jpg'))]
 
 if len(images) == 0:
@@ -186,7 +187,7 @@ if len(images) == 0:
     sys.exit()
 
 # create "year" folder
-output_path = constant.DESTINATION_PATH + "/" + current_year
+output_path = DESTINATION_PATH + "/" + current_year
 
 output_exists = os.path.exists(output_path)
 if not output_exists:
