@@ -67,13 +67,13 @@ def get_pos_by_name(location_name):
 
 def save_location_point(center_point, path):
     dataset = [*center_point]
-    output_file = path + "/.meta.data"
+    output_file = os.path.join(path, ".meta.data")
     fw = open(output_file, "wb")
     pickle.dump(dataset, fw)
     fw.close()
 
 def read_location_point(path):
-    input_file = path + "/.meta.data"
+    input_file = os.path.join(path, ".meta.data")
 
     try:
         fd = open(input_file, "rb")
@@ -102,8 +102,8 @@ match answers["operation"].lower():
 
         selection = answers["selection"].lower()
         if selection == current_year:
-            path = DESTINATION_PATH+"/"+current_year+"/"
-            directories = [folder for folder in os.listdir(path) if os.path.isdir(path+folder)]
+            path = os.path.join(DESTINATION_PATH, current_year)
+            directories = [folder for folder in os.listdir(path) if os.path.isdir(os.path.join(path, folder))]
 
             questions = [
                 inquirer.List("project_name", 
@@ -113,7 +113,7 @@ match answers["operation"].lower():
             answers = inquirer.prompt(questions)
             project_name = answers["project_name"]
 
-            center_point = read_location_point(path+project_name)
+            center_point = read_location_point(os.path.join(path, project_name))
             
             if center_point is None:
                 print("Fehler! Ortsangaben konnten nicht gefunden werden.")
@@ -121,8 +121,8 @@ match answers["operation"].lower():
 
         if selection == "anderes":
             # select parent folder
-            path = DESTINATION_PATH+"/"
-            directories = [folder for folder in os.listdir(path) if os.path.isdir(path+folder)]
+            path = DESTINATION_PATH
+            directories = [folder for folder in os.listdir(path) if os.path.isdir(os.path.join(path, folder))]
 
             questions = [
                 inquirer.List("directory", 
@@ -133,8 +133,8 @@ match answers["operation"].lower():
             parent_directory = answers["directory"]
 
             # select child folder
-            path = DESTINATION_PATH+"/"+parent_directory+"/"
-            directories = [folder for folder in os.listdir(path) if os.path.isdir(path+folder)]
+            path = os.path.join(DESTINATION_PATH, parent_directory)
+            directories = [folder for folder in os.listdir(path) if os.path.isdir(os.path.join(path, folder))]
 
             if not directories:
                 print("Ordner enthält keine BVs")
@@ -179,7 +179,7 @@ match answers["operation"].lower():
 
 radius = 150 # in meter
 
-child_source_path = SOURCE_PATH+"/"+current_year
+child_source_path = os.path.join(SOURCE_PATH, current_year)
 images = [file for file in os.listdir(child_source_path) if file.endswith(('jpeg', 'png', 'jpg'))]
 
 if len(images) == 0:
@@ -187,7 +187,7 @@ if len(images) == 0:
     sys.exit()
 
 # create "year" folder
-output_path = DESTINATION_PATH + "/" + current_year
+output_path = os.path.join(DESTINATION_PATH, current_year)
 
 output_exists = os.path.exists(output_path)
 if not output_exists:
@@ -195,7 +195,7 @@ if not output_exists:
     os.makedirs(output_path) 
 
 # create "construction" project folder
-output_path += "/" + project_name
+output_path = os.path.join(output_path, project_name)
 
 output_exists = os.path.exists(output_path)
 if not output_exists:
@@ -205,7 +205,7 @@ if not output_exists:
 # resize images
 counter = 0
 for image_str in images:
-    image_path = child_source_path+"/"+image_str
+    image_path = os.path.join(child_source_path, image_str)
     image = Image.open(image_path)
     exif_data = image._getexif()
 
@@ -219,8 +219,8 @@ for image_str in images:
 
         if dis <= radius:
             # print("{} Distance: {}".format(image, dis))
-            # shutil.copy2(image_path, output_path) # copy for debug purposes
-            shutil.move(image_path, output_path+"/"+image_str)
+            shutil.copy2(image_path, output_path) # copy for debug purposes
+            # shutil.move(image_path, os.path.join(output_path, image_str))
             counter+=1
 
     print(counter, " Fotos verschoben", end="\r")
