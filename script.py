@@ -219,8 +219,8 @@ for image_str in images:
 
         if dis <= radius:
             # print("{} Distance: {}".format(image, dis))
-            shutil.copy2(image_path, output_path) # copy for debug purposes
-            # shutil.move(image_path, os.path.join(output_path, image_str))
+            # shutil.copy2(image_path, output_path) # copy for debug purposes
+            shutil.move(image_path, os.path.join(output_path, image_str))
             counter+=1
 
     print(counter, " Fotos verschoben", end="\r")
