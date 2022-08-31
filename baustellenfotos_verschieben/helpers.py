@@ -1,4 +1,5 @@
-import os, shutil
+import os
+import platform
 import pickle
 import inquirer
 from PIL import ExifTags
@@ -15,6 +16,10 @@ def save_location_point(center_point, path):
     fw = open(output_file, "wb")
     pickle.dump(dataset, fw)
     fw.close()
+
+    # hide file in Windows file explorer
+    if platform.system() == "Windows":
+        os.system( "attrib +h {}".format(output_file) ) 
 
 def read_location_point(path):
     input_file = os.path.join(path, ".meta.data")
