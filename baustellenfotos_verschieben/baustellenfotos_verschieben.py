@@ -36,12 +36,11 @@ match operation.lower():
 
             project_name = helpers.present_list_selection("project_name", "Welches BV?", directories)
 
-        center_point = helpers.read_location_point(os.path.join(path, project_name))
+        output_path = os.path.join(output_path, project_name)
+        center_point = helpers.read_location_point(output_path)
         if center_point is None:
             print("Fehler! Ortsangaben konnten nicht gefunden werden.")
             sys.exit()
-
-        output_path = os.path.join(output_path, project_name)
 
     case "neu":
         print("BV wird im Ordner '{}' angelegt:".format(CURRENT_YEAR))
