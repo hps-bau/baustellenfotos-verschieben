@@ -88,4 +88,6 @@ for image_str in images:
     print(counter, " Fotos verschoben", end="\r")
 
 helpers.save_location_point(center_point, output_path)
-print("Prozess abgeschlossen - {} Foto(s) verschoben".format(counter))
+print("Prozess erfolgreich abgeschlossen - {} Foto(s) verschoben".format(counter))
+
+input("\nEnter drücken um Programm zu beenden...")
