@@ -1,4 +1,3 @@
-from distutils.command.config import config
 from PIL import Image, ExifTags
 from PIL.ExifTags import TAGS, GPSTAGS
 import os, shutil
