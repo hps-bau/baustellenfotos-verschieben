@@ -19,7 +19,8 @@ def save_location_point(center_point, path):
 
     # hide file in Windows file explorer
     if os.name == "nt":
-        ret = ctypes.windll.kernel32.SetFileAttributesW(file_name, FILE_ATTRIBUTE_HIDDEN)
+        FILE_ATTRIBUTE_HIDDEN = 0x02
+        ret = ctypes.windll.kernel32.SetFileAttributesW(output_file, FILE_ATTRIBUTE_HIDDEN)
         if not ret: # There was an error.
             raise ctypes.WinError()
 
