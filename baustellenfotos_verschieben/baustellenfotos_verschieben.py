@@ -21,7 +21,7 @@ match operation.lower():
 
         if selection == CURRENT_YEAR:
             output_path = os.path.join(DESTINATION_PATH, CURRENT_YEAR)
-            directories = helpers.get_directories(output_path)
+            directories = helpers.get_directories(output_path, sort_by_date=True)
             project_name = helpers.present_list_selection("project_name", "Welches BV?", directories)
         elif selection == "anderes":
             # select parent folder
@@ -30,7 +30,7 @@ match operation.lower():
 
             # select child folder
             output_path = os.path.join(DESTINATION_PATH, parent_directory)
-            directories = helpers.get_directories(output_path)
+            directories = helpers.get_directories(output_path, sort_by_date=True)
 
             if not directories:
                 print("Ordner enthält keine BVs")

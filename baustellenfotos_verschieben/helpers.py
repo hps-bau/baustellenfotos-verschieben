@@ -2,6 +2,7 @@ import os
 import ctypes
 import pickle
 import inquirer
+import glob
 from PIL import ExifTags
 
 FILE_ATTRIBUTE_HIDDEN = 0x02
@@ -65,8 +66,18 @@ def query_address():
         answers[key] = value.strip()
     return ' '.join(map(str, answers.values()))
 
-def get_directories(path):
-    return [folder for folder in os.listdir(path) if os.path.isdir(os.path.join(path, folder))]
+# returns list of directories whether sorted by date or not
+def get_directories(path, sort_by_date=False):
+    if sort_by_date:
+        list_of_file_paths = filter(os.path.isdir, glob.glob(os.path.join(path, "*")))
+        # Sort list of files based on last modification time in ascending order
+        list_of_file_paths = sorted(list_of_file_paths, key=os.path.getmtime, reverse=True)
+        # Iterate over sorted list of files and print file path 
+        # along with last modification time of file 
+        result = map(lambda file_path: os.path.basename(os.path.normpath(file_path)), list_of_file_paths)
+        return list(result)
+    else:
+        return [folder for folder in os.listdir(path) if os.path.isdir(os.path.join(path, folder))]
 
 def get_images(path):
     return [file for file in os.listdir(path) if file.endswith(('jpeg', 'png', 'jpg'))]
