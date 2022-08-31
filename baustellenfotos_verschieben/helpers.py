@@ -4,6 +4,8 @@ import pickle
 import inquirer
 from PIL import ExifTags
 
+FILE_ATTRIBUTE_HIDDEN = 0x02
+
 # reads a specific field from Exif data
 def get_exif_field (exif,field) :
   for (k,v) in exif.items():
@@ -19,7 +21,6 @@ def save_location_point(center_point, path):
 
     # hide file in Windows file explorer
     if os.name == "nt":
-        FILE_ATTRIBUTE_HIDDEN = 0x02
         ret = ctypes.windll.kernel32.SetFileAttributesW(output_file, FILE_ATTRIBUTE_HIDDEN)
         if not ret: # There was an error.
             raise ctypes.WinError()
