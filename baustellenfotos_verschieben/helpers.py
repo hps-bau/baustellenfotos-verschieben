@@ -76,3 +76,6 @@ def create_directory(path):
     if not directory_exists:
         # create output folder if not existend
         os.makedirs(path)
+
+def exit_handler():
+    input("\nEnter drücken um Programm zu beenden...")

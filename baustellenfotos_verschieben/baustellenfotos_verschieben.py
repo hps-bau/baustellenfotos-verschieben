@@ -4,8 +4,10 @@ from datetime import date
 from dotenv import load_dotenv
 import helpers
 import location
+import atexit
 
 load_dotenv()
+atexit.register(helpers.exit_handler)
 
 SOURCE_PATH = os.getenv("SOURCE_PATH")
 DESTINATION_PATH = os.getenv("DESTINATION_PATH")
@@ -92,4 +94,3 @@ for image_str in images:
     print(counter, " Fotos verschoben", end="\r")
 
 print("Prozess erfolgreich abgeschlossen - {} Foto(s) verschoben".format(counter))
-input("\nEnter drücken um Programm zu beenden...")
