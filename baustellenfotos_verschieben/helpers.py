@@ -1,5 +1,5 @@
 import os
-import platform
+import ctypes
 import pickle
 import inquirer
 from PIL import ExifTags
@@ -18,8 +18,10 @@ def save_location_point(center_point, path):
     fw.close()
 
     # hide file in Windows file explorer
-    if platform.system() == "Windows":
-        os.system( "attrib +h {}".format(output_file) ) 
+    if os.name == "nt":
+        ret = ctypes.windll.kernel32.SetFileAttributesW(file_name, FILE_ATTRIBUTE_HIDDEN)
+        if not ret: # There was an error.
+            raise ctypes.WinError()
 
 def read_location_point(path):
     input_file = os.path.join(path, ".meta.data")
