@@ -14,6 +14,7 @@ load_dotenv()
 GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
 SOURCE_PATH = os.getenv("SOURCE_PATH")
 DESTINATION_PATH = os.getenv("DESTINATION_PATH")
+CURRENT_YEAR = str(date.today().year)
 
 def clear_folder(path):
     for filename in os.listdir(path):
@@ -81,7 +82,6 @@ def read_location_point(path):
     except:
         return None
 
-current_year = str(date.today().year)
 
 questions = [
     inquirer.List("operation", 
@@ -95,13 +95,13 @@ match answers["operation"].lower():
         questions = [
             inquirer.List("selection", 
                 message="Ordner auswählen",
-                choices=[current_year, "Anderes"])
+                choices=[CURRENT_YEAR, "Anderes"])
         ]
         answers = inquirer.prompt(questions)
 
         selection = answers["selection"].lower()
-        if selection == current_year:
-            path = os.path.join(DESTINATION_PATH, current_year)
+        if selection == CURRENT_YEAR:
+            path = os.path.join(DESTINATION_PATH, CURRENT_YEAR)
             directories = [folder for folder in os.listdir(path) if os.path.isdir(os.path.join(path, folder))]
 
             questions = [
@@ -148,7 +148,7 @@ match answers["operation"].lower():
             project_name = answers["project_name"]
 
     case "neu":
-        print("BV wird im Ordner '{}' angelegt:".format(current_year))
+        print("BV wird im Ordner '{}' angelegt:".format(CURRENT_YEAR))
 
         questions = [
             inquirer.Text("project_name", message="Wie lautet das Bauvorhaben (BV)?")
@@ -178,7 +178,7 @@ match answers["operation"].lower():
 
 radius = 150 # in meter
 
-child_source_path = os.path.join(SOURCE_PATH, current_year)
+child_source_path = os.path.join(SOURCE_PATH, CURRENT_YEAR)
 images = [file for file in os.listdir(child_source_path) if file.endswith(('jpeg', 'png', 'jpg'))]
 
 if len(images) == 0:
@@ -186,7 +186,7 @@ if len(images) == 0:
     sys.exit()
 
 # create "year" folder
-output_path = os.path.join(DESTINATION_PATH, current_year)
+output_path = os.path.join(DESTINATION_PATH, CURRENT_YEAR)
 
 output_exists = os.path.exists(output_path)
 if not output_exists:
