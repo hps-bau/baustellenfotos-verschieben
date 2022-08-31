@@ -18,8 +18,8 @@ match operation.lower():
         selection = helpers.present_list_selection("selection", "Ordner auswählen", [CURRENT_YEAR, "Anderes"]).lower()
 
         if selection == CURRENT_YEAR:
-            path = os.path.join(DESTINATION_PATH, CURRENT_YEAR)
-            directories = helpers.get_directories(path)
+            output_path = os.path.join(DESTINATION_PATH, CURRENT_YEAR)
+            directories = helpers.get_directories(output_path)
             project_name = helpers.present_list_selection("project_name", "Welches BV?", directories)
         elif selection == "anderes":
             # select parent folder
@@ -27,8 +27,8 @@ match operation.lower():
             parent_directory = helpers.present_list_selection("directory", "Ordner auswählen", directories)
 
             # select child folder
-            path = os.path.join(DESTINATION_PATH, parent_directory)
-            directories = helpers.get_directories(path)
+            output_path = os.path.join(DESTINATION_PATH, parent_directory)
+            directories = helpers.get_directories(output_path)
 
             if not directories:
                 print("Ordner enthält keine BVs")
@@ -40,6 +40,8 @@ match operation.lower():
         if center_point is None:
             print("Fehler! Ortsangaben konnten nicht gefunden werden.")
             sys.exit()
+
+        output_path = os.path.join(output_path, project_name)
 
     case "neu":
         print("BV wird im Ordner '{}' angelegt:".format(CURRENT_YEAR))
@@ -53,6 +55,17 @@ match operation.lower():
             
             if center_point is None:
                 print("Es konnte keine Adresse zu deinen Angaben gefunden werden. Erneut versuchen.")
+        
+        # create "year" folder
+        output_path = os.path.join(DESTINATION_PATH, CURRENT_YEAR)
+        helpers.create_directory(output_path)
+
+        # create "construction" project folder
+        output_path = os.path.join(output_path, project_name)
+        helpers.create_directory(output_path)
+
+        # save location
+        helpers.save_location_point(center_point, output_path)
 
 # import image filenames
 child_source_path = os.path.join(SOURCE_PATH, CURRENT_YEAR)
@@ -61,14 +74,6 @@ images = helpers.get_images(child_source_path)
 if len(images) == 0:
     print("No images have been found!")
     sys.exit()
-
-# create "year" folder
-output_path = os.path.join(DESTINATION_PATH, CURRENT_YEAR)
-helpers.create_directory(output_path)
-
-# create "construction" project folder
-output_path = os.path.join(output_path, project_name)
-helpers.create_directory(output_path)
 
 # check every image if within range
 counter = 0
@@ -87,7 +92,5 @@ for image_str in images:
 
     print(counter, " Fotos verschoben", end="\r")
 
-helpers.save_location_point(center_point, output_path)
 print("Prozess erfolgreich abgeschlossen - {} Foto(s) verschoben".format(counter))
-
 input("\nEnter drücken um Programm zu beenden...")
