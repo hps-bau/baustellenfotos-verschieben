@@ -80,7 +80,7 @@ def get_directories(path, sort_by_date=False):
         return [folder for folder in os.listdir(path) if os.path.isdir(os.path.join(path, folder))]
 
 def get_images(path):
-    return [file for file in os.listdir(path) if file.endswith(('jpeg', 'png', 'jpg'))]
+    return [file for file in os.listdir(path) if file.endswith(('jpeg', 'png', 'jpg', 'heic'))]
 
 def create_directory(path):
     directory_exists = os.path.exists(path)
