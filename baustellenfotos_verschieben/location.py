@@ -39,37 +39,34 @@ def get_image_point(path):
 def _get_coordinates_from_heic(image):
     # get exif
     exif_data = image.getexif().get_ifd(0x8825)
-    if exif_data is None:
+    if exif_data is None or not exif_data:
         return None
 
     gps_info = {}
-    if not exif_data:
-        raise ValueError("No EXIF metadata found")
-    else:
-        gps_keys = ['GPSVersionID', 'GPSLatitudeRef', 'GPSLatitude', 'GPSLongitudeRef', 'GPSLongitude',
-                    'GPSAltitudeRef', 'GPSAltitude', 'GPSTimeStamp', 'GPSSatellites', 'GPSStatus', 'GPSMeasureMode',
-                    'GPSDOP', 'GPSSpeedRef', 'GPSSpeed', 'GPSTrackRef', 'GPSTrack', 'GPSImgDirectionRef',
-                    'GPSImgDirection', 'GPSMapDatum', 'GPSDestLatitudeRef', 'GPSDestLatitude', 'GPSDestLongitudeRef',
-                    'GPSDestLongitude', 'GPSDestBearingRef', 'GPSDestBearing', 'GPSDestDistanceRef', 'GPSDestDistance',
-                    'GPSProcessingMethod', 'GPSAreaInformation', 'GPSDateStamp', 'GPSDifferential']
+    gps_keys = ['GPSVersionID', 'GPSLatitudeRef', 'GPSLatitude', 'GPSLongitudeRef', 'GPSLongitude',
+        'GPSAltitudeRef', 'GPSAltitude', 'GPSTimeStamp', 'GPSSatellites', 'GPSStatus', 'GPSMeasureMode',
+        'GPSDOP', 'GPSSpeedRef', 'GPSSpeed', 'GPSTrackRef', 'GPSTrack', 'GPSImgDirectionRef',
+        'GPSImgDirection', 'GPSMapDatum', 'GPSDestLatitudeRef', 'GPSDestLatitude', 'GPSDestLongitudeRef',
+        'GPSDestLongitude', 'GPSDestBearingRef', 'GPSDestBearing', 'GPSDestDistanceRef', 'GPSDestDistance',
+        'GPSProcessingMethod', 'GPSAreaInformation', 'GPSDateStamp', 'GPSDifferential']
 
-        for k, v in exif_data.items():
-            try:
-                gps_info[gps_keys[k]] = str(v)
-            except IndexError:
-                pass
+    for k, v in exif_data.items():
+        try:
+            gps_info[gps_keys[k]] = str(v)
+        except IndexError:
+            pass
 
-        lat_ref = gps_info["GPSLatitudeRef"]
-        lat_degrees_str = gps_info["GPSLatitude"].replace('(', '').replace(')', '') # format (xx, xx, xx)
-        lat_degrees = tuple(map(float, lat_degrees_str.split(', ')))
-        lat_decimal = Point.parse_degrees(*lat_degrees, lat_ref)
+    lat_ref = gps_info["GPSLatitudeRef"]
+    lat_degrees_str = gps_info["GPSLatitude"].replace('(', '').replace(')', '') # format (xx, xx, xx)
+    lat_degrees = tuple(map(float, lat_degrees_str.split(', ')))
+    lat_decimal = Point.parse_degrees(*lat_degrees, lat_ref)
 
-        long_ref = gps_info["GPSLongitudeRef"]
-        long_degrees_str = gps_info["GPSLongitude"].replace('(', '').replace(')', '') # format (xx, xx, xx)
-        long_degress = tuple(map(float, long_degrees_str.split(', ')))
-        long_decimal = Point.parse_degrees(*long_degress, long_ref)
+    long_ref = gps_info["GPSLongitudeRef"]
+    long_degrees_str = gps_info["GPSLongitude"].replace('(', '').replace(')', '') # format (xx, xx, xx)
+    long_degress = tuple(map(float, long_degrees_str.split(', ')))
+    long_decimal = Point.parse_degrees(*long_degress, long_ref)
 
-        return (lat_decimal, long_decimal)
+    return (lat_decimal, long_decimal)
 
 def _get_coordinates_from_not_heic(image):
     # get exif data
